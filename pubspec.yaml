@@ -1,0 +1,35 @@
+name: flash_trainer_app_bloc
+version: 1.0.0+1
+publish_to: none
+description: A new Flutter project.
+environment:
+  sdk: '>=3.3.4 <4.0.0'
+
+dependencies:
+  cupertino_icons: ^1.0.6
+  flutter_blue_plus: ^1.31.16
+  flutter_bloc: any
+  bloc: any
+  intl: ^0.20.3
+  google_fonts: ^9.0.0
+  flutter_screenutil: ^5.9.1
+  permission_handler: ^13.0.2
+  equatable: ^2.0.5
+  fluttertoast: ^8.2.14
+  get_storage: ^2.1.1
+  get: 4.6.6
+  flutter:
+    sdk: flutter
+  rename_app: ^1.5.0
+
+dev_dependencies:
+  flutter_lints: ^3.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  assets:
+    - assets/images/
+    - assets/icons/
+  uses-material-design: true
+
