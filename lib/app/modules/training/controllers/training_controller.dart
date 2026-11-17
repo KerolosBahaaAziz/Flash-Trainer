@@ -14,7 +14,7 @@ import '../views/screens/start_training.dart';
 
 class TrainingController extends GetxController {
   final FlashTrainerBluetoothServices bluetoothServices =
-  Get.find<FlashTrainerBluetoothServices>();
+      Get.find<FlashTrainerBluetoothServices>();
   DatabaseRepository repository;
 
   TrainingController({required this.repository});
@@ -154,7 +154,7 @@ class TrainingController extends GetxController {
         bluetoothServices.podsActiveNumbers.isNotEmpty
             ? bluetoothServices.podsActiveNumbers.length
             : 1,
-            (index) => Pods(
+        (index) => Pods(
           wrongTouch: bluetoothServices.wrongTouchNumbers.isNotEmpty
               ? bluetoothServices.wrongTouchNumbers[index].toString()
               : '0',
@@ -173,7 +173,7 @@ class TrainingController extends GetxController {
     );
 
     var existingUserIndex =
-    users.indexWhere((user) => user.userName == name.value);
+        users.indexWhere((user) => user.userName == name.value);
 
     if (existingUserIndex != -1) {
       users[existingUserIndex].training.add(newTraining);
