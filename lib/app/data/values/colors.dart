@@ -74,6 +74,4 @@ class AppColors {
   static const Color secondaryText = Color.fromRGBO(255, 255, 255, 0.7);
   static const Color lightText = Color.fromRGBO(255, 255, 255, 0.9);
   static const Color darkText = Color.fromRGBO(0, 0, 0, 0.7);
-
-
 }

@@ -9,7 +9,6 @@ class AppShadows {
     blurRadius: 1,
   );
 
-
   static const BoxShadow greyShadow = BoxShadow(
     color: AppColors.primaryThirdElementText,
     blurRadius: 5,
@@ -21,5 +20,4 @@ class AppShadows {
     blurRadius: 5,
     offset: Offset(1, 1),
   );
-
 }
