@@ -11,6 +11,13 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Without an explicit shell, GitHub runs steps with `bash -e` and no pipefail,
+# so `cmd | tee log` would report tee's exit code and hide a failed cmd.
+# `shell: bash` makes GitHub use `bash -eo pipefail`.
+defaults:
+  run:
+    shell: bash
+
 jobs:
   checks:
     name: Format, analyze, test
@@ -55,13 +62,20 @@ jobs:
           java-version: '21'
           cache: gradle
 
-      - uses: android-actions/setup-android@v3
-
+      # The runner image ships an Android SDK with current cmdline-tools, so we use
+      # its sdkmanager directly. (android-actions/setup-android@v3 failed here: it
+      # installs the removed "tools" package by default and downgrades cmdline-tools.)
+      #
       # permission_handler_android compiles against API 37, which the SDK
       # registers as "android-37.0". AGP 9 resolves that name natively, so no
       # symlink is needed here (or anywhere else).
       - name: Install Android SDK Platform 37
-        run: sdkmanager --install "platforms;android-37.0"
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          # `yes` is killed by SIGPIPE when sdkmanager exits; `|| true` keeps
+          # that from failing the step under pipefail.
+          (yes || true) | "$SDKMANAGER" --licenses > /dev/null
+          "$SDKMANAGER" --install "platforms;android-37.0"
 
       - uses: subosito/flutter-action@v2
         with:
