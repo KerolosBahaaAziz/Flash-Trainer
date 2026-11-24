@@ -39,3 +39,51 @@ jobs:
 
       - name: Run tests
         run: flutter test
+
+  build-android:
+    name: Android debug build (no warnings)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Gradle 9 / AGP 9 need JDK 17+. 21 matches the local setup.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - uses: android-actions/setup-android@v3
+
+      # permission_handler_android compiles against API 37, which the SDK
+      # registers as "android-37.0". AGP 9 resolves that name natively, so no
+      # symlink is needed here (or anywhere else).
+      - name: Install Android SDK Platform 37
+        run: sdkmanager --install "platforms;android-37.0"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.9 # keep in sync with local toolchain
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Build debug APK
+        run: flutter build apk --debug 2>&1 | tee build.log
+
+      # "Builds cleanly" = no warning lines in Flutter's build output. That covers
+      # Flutter's toolchain checks (Gradle/AGP/Kotlin versions, compileSdk, plugins
+      # applying KGP) and AGP warnings it surfaces. Gradle/Kotlin *deprecation*
+      # notices are not printed by `flutter build` without --verbose, so they don't
+      # fail this check; they're tracked separately.
+      - name: Fail on build warnings
+        run: |
+          if grep -nE '^(Warning|WARNING)\b' build.log; then
+            echo "::error::flutter build apk printed the warnings above. Fix them or explain why in the PR."
+            exit 1
+          fi
+          echo "No build warnings."
